@@ -8,3 +8,4 @@ Create a script that creates a directory in tmp
 Move the file betty
 Delete the file betty
 Delete the my first directory on tmp
+changes the working directory to the previous one
