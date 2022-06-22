@@ -7,3 +7,4 @@ Display current directory contents with user and group IDs displayed numerically
 Create a script that creates a directory in tmp
 Move the file betty
 Delete the file betty
+Delete the my first directory on tmp
