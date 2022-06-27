@@ -1,2 +1,2 @@
 #!/bin/bash
-cat iaca
+find . -type f "*.gif" -printf "%f\n" | sort | tr -d ".gif"
