@@ -1,20 +1,44 @@
 #!/usr/bin/env bash
-# A bash script that will display information about subdomains
+# Configure my domain zone:
+# www --> 83071-lb-01 18.235.248.134
+# web-01 --> 83071-web-01 54.86.186.88
+# web-02 --> 83071-web-02 54.174.171.189
 
-subs=("www" "lb-01" "web-01" "web-02")
+# -- To be evaluated --
+# domain_information () {
+#     line=$(dig "$2"."$1" | grep -A1 'ANSWER SECTION:' | tr '\t' '\n' | tail -2 | tr '\n' ' ')
+#     echo "$2 $line" | awk '{print "The subdomain " $1 " is a " $2 " record and points to " $3}'
+# }
 
-function dns_info ()
-{
- 	read -r -a lines < <( dig "$1" | grep -A1 'ANSWER SECTION' | grep "$1" | awk '{print $4, $5}')
- 	echo "The subdomain ${2} is a ${lines[0]} record and points to ${lines[1]}"
+# if [ "$#" == 1 ]
+# then
+#   domain_information "$1" "www"
+#   domain_information "$1" "lb-01"
+#   domain_information "$1" "web-01"
+#   domain_information "$1" "web-02"
+# elif [ "$#" == 2 ]
+# then
+#   domain_information "$1" "$2"
+# fi
+#-- To be evaluated --
+
+subdomains_all=( "www" "lb-01" "web-01" "web-02" )
+
+runDig () {
+    subdomain=$1
+    domain=$2
+
+    dig "$subdomain.$domain" | grep -A1 'ANSWER SECTION:' | tail -1 | awk -v s="$subdomain" 'BEGIN { FS = " " } ; { print "The subdomain " s " is a " $4 " record and points to " $5 }'
 }
 
-if [ -z "$2" ]
-then
-	for sub in "${subs[@]}"
-	do
-		dns_info "${sub}.${1}" "$sub"
-	done
-else
-	dns_info "${2}.${1}" "${2}"
+if [ $# -eq 1 ]; then
+    domain="$1"
+    for i in "${subdomains_all[@]}"
+    do
+	runDig "$i" "$domain"
+    done
+elif [ $# -eq 2 ]; then
+    domain="$1"
+    subdomain="$2"
+    runDig "$subdomain" "$domain"
 fi
